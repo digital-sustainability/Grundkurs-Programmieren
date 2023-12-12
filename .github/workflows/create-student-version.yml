@@ -4,7 +4,7 @@ on:
   workflow_dispatch
 
 jobs:
-  create-student-version:
+  create_student_version:
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repository to the runner
@@ -24,3 +24,16 @@ jobs:
         with:
           name: student-version
           path: release
+  push_to_renku:
+    needs: create_student_version
+    runs-on: ubuntu-latest
+    steps:
+      # Download artifacts from the parent workflow
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: student-version
+          path: release
+
+      - name: Display artifact content
+        run: head release/Inhaltsverzeichnis.ipynb
