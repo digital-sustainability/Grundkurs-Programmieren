@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./tmp
+        working-directory: /tmp
     steps:
       - name: Check out the repository to the runner
         uses: actions/checkout@v4  
