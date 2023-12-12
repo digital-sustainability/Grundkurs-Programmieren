@@ -1,17 +1,7 @@
 name: Create student version
 
 on:
-  workflow_dispatch:
-    inputs:
-      branch:
-        description: "The target branch"
-        required: false
-      release_url:
-        description: "The URL of the draft GitHub release"
-        required: false
-      steps_to_skip:
-        description: "Comma separated list of steps to skip"
-        required: false
+  workflow_dispatch
 
 jobs:
   create-student-version:
