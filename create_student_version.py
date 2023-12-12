@@ -64,6 +64,8 @@ def generate_assignments(folders):
     if res['success'] == False:
       print(f"Something went wrong with {dir} :/")
       print(res['log'])
+      # Abort further execution
+      exit(1)
     print(f"Finish generating {dir}")
 
 
