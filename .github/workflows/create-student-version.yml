@@ -1,0 +1,28 @@
+name: Create student version
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: "The target branch"
+        required: false
+      release_url:
+        description: "The URL of the draft GitHub release"
+        required: false
+      steps_to_skip:
+        description: "Comma separated list of steps to skip"
+        required: false
+
+jobs:
+  example-job:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./tmp
+    steps:
+      - name: Check out the repository to the runner
+        uses: actions/checkout@v4  
+      - name: Install dependencies
+        run: pip install nbformat nbgrader traitlets
+      - name: Run a script
+        run: python create_student_version.py -d notebooks
