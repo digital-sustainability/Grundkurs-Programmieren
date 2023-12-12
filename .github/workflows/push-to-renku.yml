@@ -1,17 +1,6 @@
 name: Push to renku 
 
 on:
-  workflow_dispatch:
-    inputs:
-      branch:
-        description: "The target branch"
-        required: false
-      release_url:
-        description: "The URL of the draft GitHub release"
-        required: false
-      steps_to_skip:
-        description: "Comma separated list of steps to skip"
-        required: false
   workflow_run:
     workflows: ["Create student version"]
     types: [completed]
