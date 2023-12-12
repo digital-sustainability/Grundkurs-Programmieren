@@ -25,10 +25,10 @@ jobs:
 
       # Download artifacts from the parent workflow
       - name: Download artifacts
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
-          name: my-artifacts
-          path: artifacts
+          name: student-version
+          path: release
 
       - name: Display artifact content
-        run: cat artifacts/my_artifact.txt
+        run: head release/Inhaltsverzeichnis.ipynb
