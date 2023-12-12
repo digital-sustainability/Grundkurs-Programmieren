@@ -9,23 +9,23 @@ from nbgrader.apps import NbGraderAPI
 from traitlets.config import Config
 
 SEMESTER_WEEKS = {
-  "Woche_1": "09_22_23",
-  "Woche_2": "09_29_23",
-  "Woche_3": "10_06_23",
-  "Woche_4": "10_13_23",
-  "Woche_5": "10_20_23",
-  "Woche_6": "10_27_23",
-  "Woche_7": "11_03_23",
-  "Woche_8": "11_10_23",
-  "Woche_9": "11_17_23",
-  "Woche_10": "11_24_23",
-  "Woche_11": "12_01_23",
-  "Woche_12": "12_08_23"
+  "WEEK_1": "09_22_23",
+  "WEEK_2": "09_29_23",
+  "WEEK_3": "10_06_23",
+  "WEEK_4": "10_13_23",
+  "WEEK_5": "10_20_23",
+  "WEEK_6": "10_27_23",
+  "WEEK_7": "11_03_23",
+  "WEEK_8": "11_10_23",
+  "WEEK_9": "11_17_23",
+  "WEEK_10": "11_24_23",
+  "WEEK_11": "12_01_23",
+  "WEEK_12": "12_08_23"
 }
 
 NOTEBOOK_FOLDER = "notebooks"
 RELEASE_FOLDER = "release"
-WEEK_IDENTIFIER = "Woche_"
+WEEK_IDENTIFIER = "WEEK_"
 
 
 def load_semester_json():

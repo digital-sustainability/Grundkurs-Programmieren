@@ -14,15 +14,23 @@ on:
         required: false
 
 jobs:
-  example-job:
+  create-student-version:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: /tmp
     steps:
       - name: Check out the repository to the runner
         uses: actions/checkout@v4  
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
       - name: Install dependencies
-        run: pip install nbformat nbgrader traitlets
-      - name: Run a script
+        run: |
+          python -m pip install --upgrade pip
+          pip install nbformat nbgrader traitlets
+      - name: Run script
         run: python create_student_version.py -d notebooks
+      - name: Publish artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: student-version
+          path: release
