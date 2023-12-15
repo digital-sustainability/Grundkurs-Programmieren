@@ -1,7 +1,12 @@
 name: Create student version
 
 on:
-  workflow_dispatch
+  workflow_dispatch:
+    inputs:
+      semester:
+        description: 'Semester you want to generate, make sure that SEMESTER_WEEKS_XX exists' 
+        default: ''
+        required: true
 
 jobs:
   create_student_version:
@@ -18,12 +23,12 @@ jobs:
           python -m pip install --upgrade pip
           pip install setuptools nbformat nbgrader traitlets
       - name: Run script
-        run: python create_student_version.py -d notebooks
+        run: python create_student_version.py
       - name: Publish artifacts
         uses: actions/upload-artifact@v3
         with:
           name: student-version
-          path: release
+          path: notebooks
   push_to_renku:
     needs: create_student_version
     runs-on: ubuntu-latest
@@ -33,7 +38,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: student-version
-          path: release
+          path: notebooks
 
       - name: Display artifact content
-        run: head release/Inhaltsverzeichnis.ipynb
+        run: head notebooks/Inhaltsverzeichnis.ipynb

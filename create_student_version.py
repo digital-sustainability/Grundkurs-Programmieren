@@ -24,13 +24,12 @@ SEMESTER_WEEKS = {
 }
 
 NOTEBOOK_FOLDER = "notebooks"
-RELEASE_FOLDER = "release"
+RELEASE_FOLDER = "notebooks"
 WEEK_IDENTIFIER = "WEEK_"
 
 
 def load_semester_json():
   return
-  # TODO: Handle errors
   try:
     f = open(os.environ['SEMESTER_WEEKS'])
     SEMESTER_WEEKS = json.load(f)
@@ -59,14 +58,12 @@ def generate_assignments(folders):
   }
   api = NbGraderAPI(config=c)
   for dir in folders:
-    print(f"Start generating {dir}")
     res = api.generate_assignment(dir)
     if res['success'] == False:
       print(f"Something went wrong with {dir} :/")
       print(res['log'])
       # Abort further execution
       exit(1)
-    print(f"Finish generating {dir}")
 
 
 def generate_toc():
@@ -148,6 +145,25 @@ def set_exercise_tag(path):
   with open(path, "w") as f:
     nbformat.write(notebook, f)
 
+def resize_exercise_image(path):
+  search_pattern = r'<img src="https://i\.imgur\.com/JyhBeDB\.png" class="gk-exercise-image">'
+  replace_pattern = r'<img src="https://i.imgur.com/JyhBeDB.png" class="gk-exercise-image" style="float:right;width:150px">'
+  with open(path, "r") as f:
+    notebook = nbformat.read(f, as_version=4)
+
+  cells = notebook["cells"]
+
+  cells = filter(lambda c: c["cell_type"] == "markdown", notebook["cells"])
+  for cell in cells:
+    source = cell["source"]
+    lines = source.splitlines()
+    for index, line in enumerate(lines):
+      line = re.sub(search_pattern, replace_pattern, line)
+      lines[index] = line
+    cell["source"] = "\n".join(lines)
+
+  with open(path, "w") as f:
+    nbformat.write(notebook, f)
 
 def replace_links(path):
   with open(path, "r") as f:
@@ -188,6 +204,7 @@ def modify_assignments(assignment_folders):
       for n in notebook_files:
         replace_links(n.path)
         set_exercise_tag(n.path)
+        resize_exercise_image(n.path)
     except:
       print(f"Folder {a} not found")
 
@@ -207,7 +224,6 @@ def get_assignment_folders():
 def main():
   parser = argparse.ArgumentParser(description="A CLI tool that accepts a directory argument.")
   parser.add_argument("-d", "--directory", help="Path to the directory", type=str, required=False)
-  # parser.add_argument("mode", help="", type=str)
 
   args = parser.parse_args()
   load_semester_json()
@@ -220,8 +236,7 @@ def main():
     print(f"{args.directory} is not a valid directory.")
     folders = get_assignment_folders()
 
-
-  generate_assignments(folders)
+  # generate_assignments(folders)
   modify_assignments(folders)
   move_assignment_folders(folders)
   generate_toc()
