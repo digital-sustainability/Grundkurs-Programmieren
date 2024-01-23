@@ -9,28 +9,27 @@ from nbgrader.apps import NbGraderAPI
 from traitlets.config import Config
 
 SEMESTER_WEEKS = {
-  "WEEK_01": "09_22_23",
-  "WEEK_02": "09_29_23",
-  "WEEK_03": "10_06_23",
-  "WEEK_04": "10_13_23",
-  "WEEK_05": "10_20_23",
-  "WEEK_06": "10_27_23",
-  "WEEK_07": "11_03_23",
-  "WEEK_08": "11_10_23",
-  "WEEK_09": "11_17_23",
-  "WEEK_10": "11_24_23",
-  "WEEK_11": "12_01_23",
-  "WEEK_12": "12_08_23"
+  "Woche_1": "WEEK_01",
+  "Woche_2": "WEEK_02",
+  "Woche_3": "WEEK_03",
+  "Woche_4": "WEEK_04",
+  "Woche_5": "WEEK_05",
+  "Woche_6": "WEEK_06",
+  "Woche_7": "WEEK_07",
+  "Woche_8": "WEEK_08",
+  "Woche_9": "WEEK_09",
+  "Woche_10": "WEEK_10",
+  "Woche_11": "WEEK_11",
+  "Woche_12": "WEEK_12",
 }
 
 NOTEBOOK_FOLDER = "notebooks"
-RELEASE_FOLDER = "release"
-WEEK_IDENTIFIER = "WEEK_"
+RELEASE_FOLDER = "notebooks"
+WEEK_IDENTIFIER = "Woche_"
 
 
 def load_semester_json():
   return
-  # TODO: Handle errors
   try:
     f = open(os.environ['SEMESTER_WEEKS'])
     SEMESTER_WEEKS = json.load(f)
@@ -187,7 +186,7 @@ def modify_assignments(assignment_folders):
         filter(lambda e: e.is_file() and e.name.endswith(".ipynb"), entries))
       for n in notebook_files:
         replace_links(n.path)
-        set_exercise_tag(n.path)
+        # set_exercise_tag(n.path)
     except:
       print(f"Folder {a} not found")
 
@@ -220,11 +219,10 @@ def main():
     print(f"{args.directory} is not a valid directory.")
     folders = get_assignment_folders()
 
-
-  generate_assignments(folders)
+  # generate_assignments(folders)
   modify_assignments(folders)
   move_assignment_folders(folders)
-  generate_toc()
+  # generate_toc()
 
 
 
