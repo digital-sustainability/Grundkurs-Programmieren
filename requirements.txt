@@ -1,8 +1,8 @@
-nbgrader==0.8.0
+nbgrader==0.9.1
 numpy==1.22.2
 matplotlib==3.5.1
 pandas==1.4.2
-grundkurs_theme==1.0.2
+grundkurs-theme==1.1.0
 jupyterlab-spellchecker==0.7.2
 jupyterlab-language-pack-de-DE
 jupyterlab-geojson==3.3.0
