@@ -130,10 +130,10 @@ def set_exercise_tag(path):
 
   # Iterate over the cells in the notebook
   for cell in notebook["cells"]:
-    # Check if the cell is a markdown cell
-    if cell["cell_type"] == "markdown":
-      # Check if the string "class=\"exercise\"" is in the source of the markdown cell
-      if 'class=\"exercise\"' in cell["source"]:
+    # Check if the cell is a code cell
+    if cell["cell_type"] == "code":
+      # Check if the string "# YOUR CODE HERE" is in the source
+      if '# YOUR CODE HERE' in cell["source"]:
         # Get the existing tags or an empty list if there are no tags
         tags = cell["metadata"].get("tags", [])
         # Append the tag "exercise" to the existing tags
@@ -142,26 +142,6 @@ def set_exercise_tag(path):
         cell["metadata"]["tags"] = tags
 
   # Write the modified notebook to a file
-  with open(path, "w") as f:
-    nbformat.write(notebook, f)
-
-def resize_exercise_image(path):
-  search_pattern = r'<img src="https://i\.imgur\.com/JyhBeDB\.png" class="gk-exercise-image">'
-  replace_pattern = r'<img src="https://i.imgur.com/JyhBeDB.png" class="gk-exercise-image" style="float:right;width:150px">'
-  with open(path, "r") as f:
-    notebook = nbformat.read(f, as_version=4)
-
-  cells = notebook["cells"]
-
-  cells = filter(lambda c: c["cell_type"] == "markdown", notebook["cells"])
-  for cell in cells:
-    source = cell["source"]
-    lines = source.splitlines()
-    for index, line in enumerate(lines):
-      line = re.sub(search_pattern, replace_pattern, line)
-      lines[index] = line
-    cell["source"] = "\n".join(lines)
-
   with open(path, "w") as f:
     nbformat.write(notebook, f)
 
@@ -204,7 +184,6 @@ def modify_assignments(assignment_folders):
       for n in notebook_files:
         replace_links(n.path)
         set_exercise_tag(n.path)
-        resize_exercise_image(n.path)
     except:
       print(f"Folder {a} not found")
 
