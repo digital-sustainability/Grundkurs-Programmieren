@@ -23,12 +23,14 @@ jobs:
           python -m pip install --upgrade pip
           pip install setuptools nbformat nbgrader traitlets
       - name: Run script
+        env: 
+          SEMESTER_WEEKS: ${{ vars[format('SEMESTER_WEEKS_{0}', inputs.semester )] }}
         run: python create_student_version.py
       - name: Publish artifacts
         uses: actions/upload-artifact@v3
         with:
           name: student-version
-          path: notebooks
+          path: release
   push_to_renku:
     needs: create_student_version
     runs-on: ubuntu-latest
