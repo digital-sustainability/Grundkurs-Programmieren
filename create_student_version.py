@@ -64,6 +64,14 @@ def generate_toc():
   toc = nbformat.v4.new_notebook()
   toc['cells'] = [nbformat.v4.new_markdown_cell(HEADER)]
 
+  # Specify the kernel for the notebook
+  kernelspec = {
+      'display_name': 'Python 3',
+      'language': 'python',
+      'name': 'python3'
+  }
+  toc['metadata']['kernelspec'] = kernelspec
+
   for date in SEMESTER_WEEKS.values():
     try:
       entries = os.scandir(f"{RELEASE_FOLDER}/{date}")
@@ -98,7 +106,6 @@ def generate_toc():
           link = f"{date}/{n.name}" + "#" + heading.replace(" ", "-")
           result = f"  - [{heading}]({link})\n"
           content += result
-          print(result)
 
         toc['cells'].append(nbformat.v4.new_markdown_cell(content))
     except:
