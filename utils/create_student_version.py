@@ -7,23 +7,9 @@ import argparse
 
 from nbgrader.apps import NbGraderAPI
 from traitlets.config import Config
+from common import *
 
 SEMESTER_WEEKS = {}
-
-NOTEBOOK_FOLDER = "notebooks"
-RELEASE_FOLDER = "release"
-WEEK_IDENTIFIER = "WEEK_"
-
-
-def load_semester_json():
-  global SEMESTER_WEEKS
-  try:
-    SEMESTER_WEEKS = json.loads(os.environ['SEMESTER_WEEKS'])
-  except:
-    print("Error while loading SEMESTER_WEEKS")
-    print("Check the Pipeline configuration")
-    exit(1)
-
 
 def replace_last_occurrence(text, old, new):
   """
@@ -35,8 +21,7 @@ def replace_last_occurrence(text, old, new):
 
 def generate_assignments(folders):
   c = Config()
-  #c.CourseDirectory.root = '/home/jovyan/work/unterlagen'
-  c.CourseDirectory.source_directory = NOTEBOOK_FOLDER
+  c.CourseDirectory.source_directory = f"{NOTEBOOK_FOLDER}"
   c.ClearSolutions.code_stub = {
     "python": "# YOUR CODE HERE",
   }
@@ -187,16 +172,13 @@ def move_assignment_folders(assignment_folders):
     except:
       print(f"Could not move {a} folder")
 
-
-def get_assignment_folders():
-  return list(SEMESTER_WEEKS.keys())
-
 def main():
   parser = argparse.ArgumentParser(description="A CLI tool that accepts a directory argument.")
   parser.add_argument("-d", "--directory", help="Path to the directory", type=str, required=False)
 
   args = parser.parse_args()
-  load_semester_json()
+  global SEMESTER_WEEKS
+  SEMESTER_WEEKS = load_semester_json()
   print(SEMESTER_WEEKS)
 
 
@@ -206,7 +188,7 @@ def main():
     folders = [args.directory]
   else:
     print(f"{args.directory} is not a valid directory.")
-    folders = get_assignment_folders()
+    folders = get_assignment_folders(SEMESTER_WEEKS)
 
   generate_assignments(folders)
   modify_assignments(folders)
