@@ -5,6 +5,7 @@ NOTEBOOK_FOLDER = "notebooks"
 RELEASE_FOLDER = "release"
 WEEK_IDENTIFIER = "WEEK_"
 EXERCISE_IDENTIFIER = "exercise"
+FEEDBACK_IDS_FILE = "feedback_ids.json"
 
 
 def load_semester_json():

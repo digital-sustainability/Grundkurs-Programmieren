@@ -60,7 +60,7 @@ def main():
     global SEMESTER_WEEKS
     SEMESTER_WEEKS = load_semester_json()
     ids = get_exercises()
-    with open('feedback_ids.json', 'w') as f:
+    with open(FEEDBACK_IDS_FILE, 'w') as f:
         json.dump(ids, f)
 
 
