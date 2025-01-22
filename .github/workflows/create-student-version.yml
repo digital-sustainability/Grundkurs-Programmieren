@@ -28,7 +28,6 @@ jobs:
             - name: Run script
               env:
                   SEMESTER_WEEKS: ${{ vars[format('SEMESTER_WEEKS_{0}', inputs.semester )] }}
-                  TARGET_REPOSITORY: ${{  }}
               run: python utils/create_student_version.py
             - name: Publish artifacts
               uses: actions/upload-artifact@v4
