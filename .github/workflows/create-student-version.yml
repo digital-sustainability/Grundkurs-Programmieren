@@ -1,101 +1,132 @@
 name: Create student version
 
 on:
-  workflow_dispatch:
-    inputs:
-      semester:
-        description: 'Semester you want to generate, make sure that SEMESTER_WEEKS_XX exists' 
-        default: ''
-        required: true
+    workflow_dispatch:
+        inputs:
+            semester:
+                description: "Semester you want to generate, make sure that SEMESTER_WEEKS_XX exists"
+                default: ""
+                required: true
+
+# Ensure this workflow has permission to push to the repo
+permissions:
+    contents: write
 
 jobs:
-  create_student_version:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out the repository to the runner
-        uses: actions/checkout@v4  
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.x'
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install setuptools nbformat nbgrader traitlets
-      - name: Run script
-        env: 
-          SEMESTER_WEEKS: ${{ vars[format('SEMESTER_WEEKS_{0}', inputs.semester )] }}
-        run: python utils/create_student_version.py
-      - name: Publish artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: student-version
-          path: release
-  push_to_renku:
-    needs: create_student_version
-    runs-on: ubuntu-latest
-    steps:
-      # Download artifacts from the parent workflow
-      - name: Download artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: student-version
-          path: notebooks
+    create_student_version:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Check out the repository to the runner
+              uses: actions/checkout@v4
+            - name: Set up Python
+              uses: actions/setup-python@v4
+              with:
+                  python-version: "3.x"
+            - name: Install dependencies
+              run: python -m pip install --upgrade pip
+                  pip install setuptools nbformat nbgrader traitlets
+            - name: Run script
+              env:
+                  SEMESTER_WEEKS: ${{ vars[format('SEMESTER_WEEKS_{0}', inputs.semester )] }}
+                  TARGET_REPOSITORY: ${{  }}
+              run: python utils/create_student_version.py
+            - name: Publish artifacts
+              uses: actions/upload-artifact@v4
+              with:
+                  name: student-version
+                  path: release
 
-      - name: Display artifact content
-        run: head notebooks/Inhaltsverzeichnis.ipynb
-  generate_feedback_ids:
+    push_notebooks_to_main:
     needs: create_student_version
     runs-on: ubuntu-latest
     steps:
-      - name: Check out the repository to the runner
-        uses: actions/checkout@v4  
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.x'
-      # Download artifacts from the parent workflow
-      - name: Download artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: student-version
-          path: notebooks
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install nbformat
-      - name: Run script
-        env: 
-          SEMESTER_WEEKS: ${{ vars[format('SEMESTER_WEEKS_{0}', inputs.semester )] }}
-        run: python utils/generate_feedback_ids.py
-      - name: Publish artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: feedback_json
-          path: feedback_ids.json
-  generate_feedback_sql:
-    needs: generate_feedback_ids
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out the repository to the runner
-        uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.x'
-      # Download artifacts from the parent workflow
-      - name: Download artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: feedback_json
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install nbformat
-      - name: Run script
-        run: python utils/generate_sql_statement.py
-      - name: Publish artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: feedback_sql
-          path: feedback_ids.sql
+        - name: Check out main
+          uses: actions/checkout@v4
+          with:
+              ref: main
+              path: main-branch
+              fetch-depth: 0
+
+        - name: Download student-version artifacts
+          uses: actions/download-artifact@v4
+          with:
+              name: student-version
+              path: student-version
+
+        # Overwrite labeled_notebooks in main, commit, and push
+        - name: Overwrite labeled_notebooks in main
+          env:
+              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          run: |
+              # Go into the 'main-branch' folder which contains the main branch checkout
+              cd main-branch
+
+              # Remove the labeled_notebooks folder entirely if it exists
+              rm -rf labeled_notebooks
+
+              # Create it again and copy in the newly generated files from ../student-version
+              mkdir labeled_notebooks
+              cp -r ../student-version/* labeled_notebooks/
+
+              # Stage, commit, and push changes to main
+              git config user.name "github-actions[bot]"
+              git config user.email "github-actions[bot]@users.noreply.github.com"
+              git add labeled_notebooks
+              git commit -m "Overwriting labeled notebooks from workflow run" --allow-empty
+              git push origin main
+
+    generate_feedback_ids:
+        needs: create_student_version
+        runs-on: ubuntu-latest
+        steps:
+            - name: Check out the repository to the runner
+              uses: actions/checkout@v4
+            - name: Set up Python
+              uses: actions/setup-python@v4
+              with:
+                  python-version: "3.x"
+            # Download artifacts from the parent workflow
+            - name: Download artifacts
+              uses: actions/download-artifact@v4
+              with:
+                  name: student-version
+                  path: notebooks
+            - name: Install dependencies
+              run: |
+                  python -m pip install --upgrade pip
+                  pip install nbformat
+            - name: Run script
+              env:
+                  SEMESTER_WEEKS: ${{ vars[format('SEMESTER_WEEKS_{0}', inputs.semester )] }}
+              run: python utils/generate_feedback_ids.py
+            - name: Publish artifacts
+              uses: actions/upload-artifact@v4
+              with:
+                  name: feedback_json
+                  path: feedback_ids.json
+    generate_feedback_sql:
+        needs: generate_feedback_ids
+        runs-on: ubuntu-latest
+        steps:
+            - name: Check out the repository to the runner
+              uses: actions/checkout@v4
+            - name: Set up Python
+              uses: actions/setup-python@v4
+              with:
+                  python-version: "3.x"
+            # Download artifacts from the parent workflow
+            - name: Download artifacts
+              uses: actions/download-artifact@v4
+              with:
+                  name: feedback_json
+            - name: Install dependencies
+              run: |
+                  python -m pip install --upgrade pip
+                  pip install nbformat
+            - name: Run script
+              run: python utils/generate_sql_statement.py
+            - name: Publish artifacts
+              uses: actions/upload-artifact@v4
+              with:
+                  name: feedback_sql
+                  path: feedback_ids.sql
