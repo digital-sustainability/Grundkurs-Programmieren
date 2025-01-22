@@ -37,43 +37,43 @@ jobs:
                   path: release
 
     push_notebooks_to_main:
-    needs: create_student_version
-    runs-on: ubuntu-latest
-    steps:
-        - name: Check out main
-          uses: actions/checkout@v4
-          with:
-              ref: main
-              path: main-branch
-              fetch-depth: 0
+        needs: create_student_version
+        runs-on: ubuntu-latest
+        steps:
+            - name: Check out main
+              uses: actions/checkout@v4
+              with:
+                  ref: main
+                  path: main-branch
+                  fetch-depth: 0
 
-        - name: Download student-version artifacts
-          uses: actions/download-artifact@v4
-          with:
-              name: student-version
-              path: student-version
+            - name: Download student-version artifacts
+              uses: actions/download-artifact@v4
+              with:
+                  name: student-version
+                  path: student-version
 
-        # Overwrite labeled_notebooks in main, commit, and push
-        - name: Overwrite labeled_notebooks in main
-          env:
-              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          run: |
-              # Go into the 'main-branch' folder which contains the main branch checkout
-              cd main-branch
+            # Overwrite labeled_notebooks in main, commit, and push
+            - name: Overwrite labeled_notebooks in main
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: |
+                  # Go into the 'main-branch' folder which contains the main branch checkout
+                  cd main-branch
 
-              # Remove the labeled_notebooks folder entirely if it exists
-              rm -rf labeled_notebooks
+                  # Remove the labeled_notebooks folder entirely if it exists
+                  rm -rf labeled_notebooks
 
-              # Create it again and copy in the newly generated files from ../student-version
-              mkdir labeled_notebooks
-              cp -r ../student-version/* labeled_notebooks/
+                  # Create it again and copy in the newly generated files from ../student-version
+                  mkdir labeled_notebooks
+                  cp -r ../student-version/* labeled_notebooks/
 
-              # Stage, commit, and push changes to main
-              git config user.name "github-actions[bot]"
-              git config user.email "github-actions[bot]@users.noreply.github.com"
-              git add labeled_notebooks
-              git commit -m "Overwriting labeled notebooks from workflow run" --allow-empty
-              git push origin main
+                  # Stage, commit, and push changes to main
+                  git config user.name "github-actions[bot]"
+                  git config user.email "github-actions[bot]@users.noreply.github.com"
+                  git add labeled_notebooks
+                  git commit -m "Overwriting labeled notebooks from workflow run" --allow-empty
+                  git push origin main
 
     generate_feedback_ids:
         needs: create_student_version
