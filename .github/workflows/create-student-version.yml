@@ -39,6 +39,8 @@ jobs:
     push_notebooks_to_main:
         needs: create_student_version
         runs-on: ubuntu-latest
+        env:
+            SEMESTER: ${{ github.event.inputs.semester }}
         steps:
             - name: Check out main
               uses: actions/checkout@v4
@@ -53,26 +55,22 @@ jobs:
                   name: student-version
                   path: student-version
 
-            # Overwrite labeled_notebooks in main, commit, and push
-            - name: Overwrite labeled_notebooks in main
+            # Overwrite student_versions in main, commit, and push
+            - name: Overwrite student_versions in main
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               run: |
-                  # Go into the 'main-branch' folder which contains the main branch checkout
                   cd main-branch
 
-                  # Remove the labeled_notebooks folder entirely if it exists
-                  rm -rf labeled_notebooks
+                  rm -rf "student_versions/${SEMESTER}"
 
-                  # Create it again and copy in the newly generated files from ../student-version
-                  mkdir labeled_notebooks
-                  cp -r ../student-version/* labeled_notebooks/
+                  mkdir -p "student_versions/${SEMESTER}"
+                  cp -r ../student-version/* "student_versions/${SEMESTER}/"
 
-                  # Stage, commit, and push changes to main
                   git config user.name "github-actions[bot]"
                   git config user.email "github-actions[bot]@users.noreply.github.com"
-                  git add labeled_notebooks
-                  git commit -m "Overwriting labeled notebooks from workflow run" --allow-empty
+                  git add "student_versions/${SEMESTER}"
+                  git commit -m "Overwriting notebooks for semester: ${SEMESTER}" --allow-empty
                   git push origin main
 
     generate_feedback_ids:
