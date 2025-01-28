@@ -8,8 +8,8 @@ In diesem Projekt werden die Unterlagen für den Grundkurs Programmieren der Uni
 
 Um die Unterlagen für das aktuelle Semester zu erstellen müssen folgende Schritte durchgeführt werden:
 
-1. Unter folgendem [Link](https://github.com/grundkurs-programmieren/unterlagen/settings/variables/actions) muss eine JSON Datei hinterlegt werden für das Mapping WEEK_XX -> DD.MM.YYYY mit dem Namen `SEMESTER_WEEKS_XX`
-2. Unter folgendem [Link](https://github.com/grundkurs-programmieren/unterlagen/actions/workflows/create-student-version.yml) kann ein neuer Workflow gestartet werden (Run Workflow)
+1. Unter folgendem [Link](https://github.com/digital-sustainability/Grundkurs-Programmieren/settings/variables/actions) muss eine JSON Datei hinterlegt werden für das Mapping WEEK_XX -> DD.MM.YYYY mit dem Namen `SEMESTER_WEEKS_XX`
+2. Unter folgendem [Link](https://github.com/digital-sustainability/Grundkurs-Programmieren/actions/workflows/create-student-version.yml) kann ein neuer Workflow gestartet werden (Run Workflow)
 3. Der abgeschlossene Workflow generiert/überschreibt den Ordner student_versions/{SEMESTER} mit den Unterlagen für das aktuelle Semester.
    <br> Zusätzlich generiert der Workflow drei verschiedene Artefakte, die auch die Unterlagen für das Semester beinhalten.
 
