@@ -67,7 +67,6 @@ jobs:
                   mkdir -p "student_versions/${SEMESTER}"
 
                   ls student_versions/${SEMESTER}
-                  ls ../student-version/
 
                   cp -r ../student-version/* "student_versions/${SEMESTER}/"
 
