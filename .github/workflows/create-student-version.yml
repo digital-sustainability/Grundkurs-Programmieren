@@ -65,6 +65,10 @@ jobs:
                   rm -rf "student_versions/${SEMESTER}"
 
                   mkdir -p "student_versions/${SEMESTER}"
+
+                  ls student_versions/${SEMESTER}
+                  ls ../student-version/
+
                   cp -r ../student-version/* "student_versions/${SEMESTER}/"
 
                   git config user.name "github-actions[bot]"
