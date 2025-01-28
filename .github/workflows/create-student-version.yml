@@ -66,9 +66,13 @@ jobs:
 
                   mkdir -p "student_versions/${SEMESTER}"
 
-                  ls student_versions/${SEMESTER}
-
                   cp -r ../student-version/* "student_versions/${SEMESTER}/"
+
+                  echo ---
+                  ls "student_versions/${SEMESTER}"
+                  echo ---
+                  ls "../student-version/"
+                  echo ---
 
                   git config user.name "github-actions[bot]"
                   git config user.email "github-actions[bot]@users.noreply.github.com"
