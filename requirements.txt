@@ -7,3 +7,4 @@ jupyterlab-geojson==3.3.0
 folium==0.12.1
 geopandas==1.0.1
 ipywidgets==7.6.6
+dotenv
